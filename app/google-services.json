@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "874911799149",
+    "project_id": "styapp-8924f",
+    "storage_bucket": "styapp-8924f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874911799149:android:b27bd5ac7e22f4f7e16c64",
+        "android_client_info": {
+          "package_name": "com.example.teamproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBs0kidbcpk6QSPCK3MSU9bCfyMvzr3nF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
