@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Display Balance -->
+
+    <!-- Item 1 -->
+
+    <TextView
+        android:id="@+id/balanceTextView"
+        android:layout_width="199dp"
+        android:layout_height="44dp"
+        android:layout_below="@+id/buttonShopBack"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="137dp"
+        android:layout_marginTop="24dp"
+        android:text="Balance: $100"
+        android:textSize="24sp" />
+
+    <LinearLayout
+        android:id="@+id/item1Layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/balanceTextView"
+        android:layout_marginTop="43dp"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Item 1 Icon (You can replace with an ImageView) -->
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:srcCompat="@drawable/googleg_disabled_color_18" />
+
+
+        <!-- Item 1 Name -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Item 1" />
+
+        <!-- Item 1 Price -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="$10" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/item2Layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/balanceTextView"
+        android:layout_marginTop="127dp"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Item 2 Icon (You can replace with an ImageView) -->
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:srcCompat="@drawable/googleg_disabled_color_18" />
+
+
+        <!-- Item 2 Name -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Item 1" />
+
+        <!-- Item 2 Price -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="$10" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/item3Layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/balanceTextView"
+        android:layout_marginTop="213dp"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Item 3 Icon (You can replace with an ImageView) -->
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:srcCompat="@drawable/googleg_disabled_color_18" />
+
+
+        <!-- Item 3 Name -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Item 3" />
+
+        <!-- Item 3 Price -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="$10" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/buttonShopBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="337dp"
+        android:backgroundTint="#FDF6FE"
+        app:tint="#000000"
+        app:srcCompat="@android:drawable/ic_media_rew" />
+
+</RelativeLayout>

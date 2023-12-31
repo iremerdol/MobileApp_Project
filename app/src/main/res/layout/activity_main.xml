@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="#FEFEFE"
+    android:backgroundTint="#FDFDFD"
     tools:context=".MainActivity">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:max="8000"
-            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:background="@drawable/circular_shape"
-            android:progressDrawable="@drawable/circular_progress_bar"
-            />
+            android:max="8000"
+            android:progressDrawable="@drawable/circular_progress_bar" />
 
         <TextView
             android:id="@+id/steps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total Steps"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:textSize="20sp"
+            android:text="Total Steps"
             android:textColor="#807C7C"
+            android:textSize="20sp"
             android:textStyle="bold"
 
             />
@@ -85,9 +84,23 @@
         android:layout_marginEnd="248dp"
         android:layout_marginBottom="115dp"
         android:backgroundTint="#FEFEFE"
-        app:tint="#000000"
         android:tintMode="src_atop"
-        app:srcCompat="@android:drawable/ic_menu_share" />
+        app:srcCompat="@android:drawable/ic_menu_share"
+        app:tint="#000000" />
+
+    <ImageButton
+        android:id="@+id/buttonWallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="316dp"
+        android:layout_marginTop="-516dp"
+        android:layout_marginEnd="42dp"
+        android:layout_marginBottom="63dp"
+        android:backgroundTint="#FCFCFC"
+        app:srcCompat="@drawable/wallet" />
     />
 
 

@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ProgressBar progressBar;
     private TextView steps;
 
-    private ImageButton buttonLogOut,buttonShare;
+    private ImageButton buttonLogOut,buttonShare,buttonWallet;
 
     private FirebaseAuth mAuth;
 
@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         buttonLogOut = findViewById(R.id.buttonLogOut);
         buttonShare = findViewById(R.id.buttonShare);
+        buttonWallet = findViewById(R.id.buttonWallet);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -66,6 +67,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, contacts.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        buttonWallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, shop.class);
                 startActivity(intent);
                 finish();
             }
