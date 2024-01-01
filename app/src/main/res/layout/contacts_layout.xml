@@ -10,10 +10,24 @@
         android:id="@+id/listViewContacts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
+        android:layout_below="@+id/buttonContactBack"
+        android:layout_marginTop="5dp"
+        android:choiceMode="singleChoice"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="0.5dp"
-        android:choiceMode="singleChoice" />
+        android:padding="16dp" />
+
+    <ImageButton
+        android:id="@+id/buttonContactBack"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="17dp"
+        android:backgroundTint="#FDF6FE"
+        android:scaleType="fitCenter"
+        android:src="@drawable/left_arrow" />
 
 </RelativeLayout>
 

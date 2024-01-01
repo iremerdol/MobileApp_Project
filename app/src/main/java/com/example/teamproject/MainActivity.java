@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Sensor stepSensor;
     private int totalStep = 0;
     private int previewsTotalStep = 0;
-    private int stycoin;
+
+    int startValue,endValue;
     private ProgressBar progressBar;
     private TextView steps,textBalance;
 
@@ -103,14 +104,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-        String email = currentUser.getEmail();
-
-        System.out.println(email);
-
         progressBar = findViewById(R.id.progressBar);
         steps = findViewById(R.id.steps);
 
-        resetSteps();
         loadData();
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -121,12 +117,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onResume(){
         super.onResume();
 
-        if(stepSensor == null){
+        if (stepSensor == null) {
             Toast.makeText(this, "This device has no sensor.", Toast.LENGTH_SHORT).show();
-        }
-        else{
+        } else {
             sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
+
     }
 
     protected void onPause(){
@@ -145,38 +141,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    private void resetSteps(){
-        steps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Long press to reset steps.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        steps.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                previewsTotalStep = totalStep;
-                steps.setText("0");
-                progressBar.setProgress(0);
-                saveData();
-                return true;
-            }
-        });
-    }
-
-    private void saveData(){
+    private void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("key1", String.valueOf(previewsTotalStep));
+        editor.putInt("key1", previewsTotalStep);
         editor.apply();
     }
 
-    private void loadData(){
+    private void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
-        int savedNumber = (int) sharedPreferences.getFloat("key1", 0f);
+        int savedNumber = sharedPreferences.getInt("key1", 0);
         previewsTotalStep = savedNumber;
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

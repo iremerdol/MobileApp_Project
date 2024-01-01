@@ -10,6 +10,7 @@ import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,10 +26,22 @@ import java.util.ArrayList;
 public class contacts extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
+
+    private ImageButton buttonContactBack;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contacts_layout);
+
+        buttonContactBack = findViewById(R.id.buttonContactBack);
+        buttonContactBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(contacts.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         // Check if the READ_CONTACTS permission is not granted
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)

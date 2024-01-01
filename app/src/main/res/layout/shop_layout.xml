@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,7 +15,7 @@
         android:layout_height="61dp"
         android:layout_below="@+id/buttonShopBack"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="137dp"
+        android:layout_marginStart="107dp"
         android:layout_marginTop="24dp"
         android:text="Balance: Loading"
         android:textSize="24sp" />
@@ -122,7 +123,7 @@
     <ImageButton
         android:id="@+id/buttonShopBack"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="66dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -130,8 +131,10 @@
         android:layout_marginTop="17dp"
         android:layout_marginEnd="337dp"
         android:backgroundTint="#FDF6FE"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/left_arrow"
         app:tint="#000000"
-        app:srcCompat="@android:drawable/ic_media_rew" />
+        tools:srcCompat="@drawable/left_arrow" />
 
     <TextView
         android:id="@+id/textGiftCount"
