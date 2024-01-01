@@ -137,6 +137,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
+        buttonRedeem.setClickable(false);
+
         progressBar = findViewById(R.id.progressBar);
         steps = findViewById(R.id.steps);
 
