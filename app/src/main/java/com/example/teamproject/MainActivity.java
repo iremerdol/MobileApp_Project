@@ -8,11 +8,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,29 +18,32 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+
+
+import java.util.Calendar;
+
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    private SensorManager sensorManager = null;
-    private Sensor stepSensor;
-    private int totalStep = 0;
-    private int previewsTotalStep = 0;
-
-    int startValue,endValue;
+    private SensorManager sensorManager;
+    private Sensor stepCounterSensor;
+    private SharedPreferences sharedPreferences;
+    private static final String PREF_NAME = "StepCounterPrefs";
+    private static final String STEP_COUNT_KEY = "stepCount";
+    private static final String MIDNIGHT_KEY = "midnight";
     private ProgressBar progressBar;
-    private TextView steps,textBalance;
+    private TextView steps, textBalance;
 
-    private ImageButton buttonLogOut,buttonShare,buttonWallet;
+    private ImageButton buttonLogOut, buttonShare, buttonWallet;
 
     private FirebaseAuth mAuth;
+
+    int firstStepCount;
+    boolean firstFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser == null){
+        if (currentUser == null) {
             Intent intent = new Intent(MainActivity.this, login.class);
             startActivity(intent);
             finish();
@@ -75,6 +76,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             }
                         }
                 );
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+        resetStepCountIfMidnight();
+
+        firstFlag = true;
+
+        // Register the sensor listener
+        if (stepCounterSensor != null) {
+            sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        } else {
+            Toast.makeText(this, "Step Counter Sensor not available", Toast.LENGTH_SHORT).show();
+        }
 
         buttonLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,53 +123,81 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         progressBar = findViewById(R.id.progressBar);
         steps = findViewById(R.id.steps);
 
-        loadData();
+        steps.setText("Total Steps " + String.valueOf(0));
 
-        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-
+        progressBar.setProgress(0);
     }
 
-    protected void onResume(){
-        super.onResume();
-
-        if (stepSensor == null) {
-            Toast.makeText(this, "This device has no sensor.", Toast.LENGTH_SHORT).show();
-        } else {
-            sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the sensor listener to save resources when the activity is destroyed
+        if (stepCounterSensor != null) {
+            sensorManager.unregisterListener(this);
         }
-
-    }
-
-    protected void onPause(){
-        super.onPause();
-        sensorManager.unregisterListener(this);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(event.sensor.getType() == Sensor.TYPE_STEP_COUNTER){
-            totalStep = (int)event.values[0];
-            int currentSteps = totalStep - previewsTotalStep;
-            steps.setText(String.valueOf(currentSteps));
+        if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+            // Retrieve the saved step count
 
-            progressBar.setProgress(currentSteps);
+            if(firstFlag == true){
+                firstFlag = false;
+                firstStepCount = (int) event.values[0];
+                if(sharedPreferences.getInt(STEP_COUNT_KEY, 0) == 0){
+                    sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).apply();
+                }
+            }
+
+            int savedStepCount = sharedPreferences.getInt(STEP_COUNT_KEY, 0);
+
+            // Increment the step count
+            int currentStepCount = (int) event.values[0];
+            int newStepCount = (currentStepCount - firstStepCount);
+            newStepCount /= 10;
+
+            // Save the new step count
+            sharedPreferences.edit().putInt(STEP_COUNT_KEY, savedStepCount + newStepCount).apply();
+
+            savedStepCount = sharedPreferences.getInt(STEP_COUNT_KEY, 0);
+
+            // Check if the step count exceeds 10k
+            if (savedStepCount >= 10000) {
+                Toast.makeText(this, "Yayyyyy! You've taken over 10,000 steps!", Toast.LENGTH_SHORT).show();
+                // Reset the step count
+                sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).apply();
+            }
+
+            steps.setText("Total Steps " + String.valueOf(savedStepCount));
+
+            progressBar.setProgress(savedStepCount);
         }
     }
 
-    private void saveData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("key1", previewsTotalStep);
-        editor.apply();
+    private void resetStepCountIfMidnight() {
+        // Retrieve last midnight timestamp
+        long lastMidnight = sharedPreferences.getLong(MIDNIGHT_KEY, 0);
+
+        // Get current time
+        long currentTime = System.currentTimeMillis();
+
+        // Check if it's a new day
+        if (currentTime > lastMidnight + 24 * 60 * 60 * 1000) {
+            // Reset step count and update last midnight timestamp
+            sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).putLong(MIDNIGHT_KEY, getTodayMidnight()).apply();
+        }
     }
 
-    private void loadData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
-        int savedNumber = sharedPreferences.getInt("key1", 0);
-        previewsTotalStep = savedNumber;
+    @NonNull
+    private long getTodayMidnight() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTimeInMillis();
     }
-
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

@@ -21,68 +21,61 @@
             android:layout_width="300dp"
             android:layout_height="300dp"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:background="@drawable/circular_shape"
-            android:max="8000"
+            android:max="10000"
             android:progressDrawable="@drawable/circular_progress_bar" />
 
         <TextView
             android:id="@+id/steps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="Total Steps"
+            android:layout_centerInParent="true"
+            android:text="Total Steps  "
+
             android:textColor="#807C7C"
             android:textSize="20sp"
-            android:textStyle="bold"
-
-            />
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
 
     <TextView
         android:id="@+id/textBalance"
-        android:layout_width="96dp"
-        android:layout_height="wrap_content"
+        android:layout_width="137dp"
+        android:layout_height="78dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="297dp"
-        android:layout_marginTop="57dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginBottom="612dp"
+        android:layout_marginStart="231dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="43dp"
+        android:layout_marginBottom="619dp"
         android:text=""
         android:textSize="20sp" />
 
     <ImageButton
         android:id="@+id/buttonLogOut"
-        android:layout_width="60dp"
-        android:layout_height="42dp"
+        android:layout_width="51dp"
+        android:layout_height="43dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="54dp"
-        android:layout_marginEnd="314dp"
-        android:layout_marginBottom="142dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="39dp"
+        android:layout_marginBottom="142sp"
         android:background="#FEFEFE"
         android:backgroundTint="#FEFEFE"
         android:src="@drawable/exit" />
 
     <ImageButton
         android:id="@+id/buttonShare"
-        android:layout_width="wrap_content"
+        android:layout_width="45dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="107dp"
-        android:layout_marginTop="49dp"
-        android:layout_marginEnd="248dp"
-        android:layout_marginBottom="115dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="115sp"
+        android:layout_toEndOf="@+id/buttonLogOut"
         android:backgroundTint="#FEFEFE"
         android:tintMode="src_atop"
         app:srcCompat="@android:drawable/ic_menu_share"
@@ -92,13 +85,12 @@
         android:id="@+id/buttonWallet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_below="@+id/null"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="316dp"
-        android:layout_marginTop="-516dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginBottom="63dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="46dp"
+        android:layout_marginBottom="96dp"
         android:backgroundTint="#FCFCFC"
         app:srcCompat="@drawable/wallet" />
     />
