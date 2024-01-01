@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-//test
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;

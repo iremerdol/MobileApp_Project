@@ -17,10 +17,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -30,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int previewsTotalStep = 0;
     private int stycoin;
     private ProgressBar progressBar;
-    private TextView steps;
+    private TextView steps,textBalance;
 
     private ImageButton buttonLogOut,buttonShare,buttonWallet;
 
@@ -44,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         buttonLogOut = findViewById(R.id.buttonLogOut);
         buttonShare = findViewById(R.id.buttonShare);
         buttonWallet = findViewById(R.id.buttonWallet);
+        textBalance = findViewById(R.id.textBalance);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -52,6 +60,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             startActivity(intent);
             finish();
         }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(mAuth.getUid().toString())
+                .get().addOnCompleteListener(
+                        task -> {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                Long balance = document.getLong("balance");
+                                textBalance.setText(balance+" STY");
+                            } else {
+                                textBalance.setText("Err");
+                            }
+                        }
+                );
 
         buttonLogOut.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -11,10 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class register extends AppCompatActivity{
     private EditText editTextMail, editTextPass,editTextPass2;
@@ -33,6 +40,8 @@ public class register extends AppCompatActivity{
             startActivity(intent);
             finish();
         }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Initialize UI elements
         editTextMail = findViewById(R.id.editTextMail);
@@ -61,9 +70,15 @@ public class register extends AppCompatActivity{
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            // Sign in success, update UI with the signed-in user's information
-                                            FirebaseUser user = mAuth.getCurrentUser();
-                                            // Start MainActivity
+                                            Map<String, Object> user = new HashMap<>();
+                                            user.put("email", mail);
+                                            user.put("pass", password);
+                                            user.put("balance", 0);
+                                            user.put("gifts" , 0);
+
+                                            // Add a new document with a generated ID
+                                            db.collection("users").document(mAuth.getUid().toString()).set(user);
+
                                             Intent intent = new Intent(register.this, MainActivity.class);
                                             startActivity(intent);
                                             finish();
