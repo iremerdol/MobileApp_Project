@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private FirebaseAuth mAuth;
 
     int firstStepCount;
-    boolean firstFlag = false;
+    boolean firstFlag = false,isRedeemed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         resetStepCountIfMidnight();
 
         firstFlag = true;
+        isRedeemed  = false;
 
         // Register the sensor listener
         if (stepCounterSensor != null) {
