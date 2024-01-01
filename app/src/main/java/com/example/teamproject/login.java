@@ -86,7 +86,9 @@ public class login extends AppCompatActivity {
         buttonForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(login.this, reset.class);
+                startActivity(intent);
+                finish(); // Close the login activity
             }
         });
     }
