@@ -30,7 +30,7 @@ public class register extends AppCompatActivity{
     private FirebaseAuth mAuth;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         super.onCreate(savedInstanceState);
@@ -45,16 +45,12 @@ public class register extends AppCompatActivity{
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // Initialize UI elements
         editTextMail = findViewById(R.id.editTextMail);
         editTextPass = findViewById(R.id.editTextPass);
         editTextPass2 = findViewById(R.id.editTextPass2);
-
         buttonSignUp = findViewById(R.id.buttonSignUp);
         buttonLoginPage = findViewById(R.id.buttonLoginPage);
 
-        // Set a click listener for the login button
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,26 +62,26 @@ public class register extends AppCompatActivity{
                     Toast.makeText(register.this, "Please fulfill the mail and password.",
                             Toast.LENGTH_SHORT).show();
                 }
-                else {
-                    if (password.equals(password2)) {
+                else{
+                    if(password.equals(password2)){
                         mAuth.createUserWithEmailAndPassword(mail, password)
                                 .addOnCompleteListener(register.this, new OnCompleteListener<AuthResult>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (task.isSuccessful()) {
+                                    public void onComplete(@NonNull Task<AuthResult> task){
+                                        if(task.isSuccessful()){
+                                            //create a user with the given inputs
                                             Map<String, Object> user = new HashMap<>();
                                             user.put("email", mail);
                                             user.put("pass", password);
                                             user.put("balance", 0);
                                             user.put("gifts" , 0);
 
-                                            // Add a new document with a generated ID
                                             db.collection("users").document(mAuth.getUid().toString()).set(user);
-
                                             Intent intent = new Intent(register.this, MainActivity.class);
                                             startActivity(intent);
                                             finish();
-                                        } else {
+                                        }
+                                        else{
                                             // If sign in fails, display a message to the user.
                                             Toast.makeText(register.this, task.getException().toString(),
                                                     Toast.LENGTH_SHORT).show();
@@ -93,13 +89,13 @@ public class register extends AppCompatActivity{
                                     }
                                 });
                         Toast.makeText(register.this, "Register successful", Toast.LENGTH_SHORT).show();
-                    } else {
+                    }
+                    else{
                         Toast.makeText(register.this, "The passwords does not match.", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
-
         buttonLoginPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

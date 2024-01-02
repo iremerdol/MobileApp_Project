@@ -21,12 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class shop extends AppCompatActivity {
-
-    private Long balance = 0L;  // Initial balance, you can set it based on your requirement
-
+    private Long balance = 0L;
     private long giftTimes = 0L;
     private TextView textBalanceShop,textGiftCount;
-
     private ImageButton buttonShopBack;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -39,27 +36,24 @@ public class shop extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shop_layout);
 
-        // Initialize balance TextView
         textBalanceShop = findViewById(R.id.textBalanceShop);
         buttonShopBack = findViewById(R.id.buttonShopBack);
         textGiftCount = findViewById(R.id.textGiftCount);
 
-        // Set up click listeners for items
         setUpItemClickListener(R.id.item1Layout, 500,1);  // 500 is the price decrement for Item 1
         setUpItemClickListener(R.id.item2Layout, 1000,3);  // 1000 is the price decrement for Item 2
         setUpItemClickListener(R.id.item3Layout, 1500,5);  // 1500 is the price decrement for Item 3
 
-        // Repeat the above line for Item 2 to Item 5
-
         db.collection("users").document(mAuth.getUid().toString())
                 .get().addOnCompleteListener(
                         task -> {
-                            if (task.isSuccessful()) {
+                            if(task.isSuccessful()){
                                 DocumentSnapshot document = task.getResult();
                                 balance = document.getLong("balance");
                                 giftTimes = document.getLong("gifts");
                                 updateBalance();
-                            } else {
+                            }
+                            else{
                                 balance = 0L;
                                 updateBalance();
                             }
@@ -83,39 +77,35 @@ public class shop extends AppCompatActivity {
         itemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Perform item purchase logic
-                if (balance >= price) {
-                    // Add visual feedback - change background color temporarily
+                if(balance >= price){
                     itemLayout.setBackgroundColor(getResources().getColor(R.color.clickedColor));
                     view.postDelayed(new Runnable() {
                         @Override
-                        public void run() {
-                            // Revert background color after a short delay
+                        public void run(){
                             itemLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
                         }
-                    }, 200); // 200 milliseconds delay, adjust as needed
+                    }, 200);
 
                     balance -= price;
                     giftTimes += gift;
                     db.collection("users").document(mAuth.getUid().toString())
                             .get().addOnCompleteListener(
                                     task -> {
-                                        if (task.isSuccessful()) {
+                                        if(task.isSuccessful()){
                                             DocumentSnapshot document = task.getResult();
-
                                             Map<String, Object> user = new HashMap<>();
                                             user.put("email", document.getString("email"));
                                             user.put("pass", document.getString("pass"));
                                             user.put("balance", balance);
                                             user.put("gifts", giftTimes);
-                                            // Add a new document with a generated ID
                                             db.collection("users").document(mAuth.getUid().toString()).set(user);
                                         }
                                     });
                     celebratePurchase();
                     updateBalance();
 
-                } else {
+                }
+                else{
                     Toast.makeText(shop.this, "Insufficient STY coin :(", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -123,17 +113,12 @@ public class shop extends AppCompatActivity {
     }
 
 
-    private void celebratePurchase() {
-        // Implement your celebration animation or effect here
-        // For example, you can use a library like Lottie for animations
-    }
+    private void celebratePurchase() {}
 
     private void updateBalance() {
         textBalanceShop.setText("Balance: " + balance + " STY");
         if(giftTimes > 0){
             textGiftCount.setText("You gifted " + giftTimes + " can of food to stray animals. They are thanking you so much.");
         }
-
     }
-
 }

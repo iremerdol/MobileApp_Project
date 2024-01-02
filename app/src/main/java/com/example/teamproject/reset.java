@@ -56,7 +56,7 @@ public class reset extends AppCompatActivity{
     private void resetPassword() {
         String email = editTextEmail.getText().toString().trim();
 
-        if (email.isEmpty()) {
+        if(email.isEmpty()){
             Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -65,9 +65,10 @@ public class reset extends AppCompatActivity{
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
+                        if(task.isSuccessful()){
                             Toast.makeText(reset.this, "Password reset email sent. Check your email.", Toast.LENGTH_SHORT).show();
-                        } else {
+                        }
+                        else{
                             Toast.makeText(reset.this, "Failed to send reset email. Please check your email address.", Toast.LENGTH_SHORT).show();
                         }
                     }

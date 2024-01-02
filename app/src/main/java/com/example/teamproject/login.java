@@ -22,7 +22,7 @@ public class login extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         super.onCreate(savedInstanceState);
@@ -36,18 +36,15 @@ public class login extends AppCompatActivity {
             finish();
         }
 
-        // Initialize UI elements
         editTextMail = findViewById(R.id.editTextMail);
         editTextPass = findViewById(R.id.editTextPass);
         buttonLogin = findViewById(R.id.buttonLogin);
-
         buttonSignUpPage = findViewById(R.id.buttonSignUpPage);
         buttonForgotPass = findViewById(R.id.buttonForgotPass);
 
-        // Set a click listener for the login button
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view){
                 String mail = editTextMail.getText().toString();
                 String password = editTextPass.getText().toString();
 
@@ -59,15 +56,14 @@ public class login extends AppCompatActivity {
                     mAuth.signInWithEmailAndPassword(mail, password)
                             .addOnCompleteListener(login.this, new OnCompleteListener<AuthResult>() {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
+                        public void onComplete(@NonNull Task<AuthResult> task){
+                            if(task.isSuccessful()){
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 Intent intent = new Intent(login.this, MainActivity.class);
                                 startActivity(intent);
-                                finish(); // Close the login activity
-                            } else {
-                                // If sign in fails, display a message to the user.
+                                finish();
+                            }
+                            else{
                                 Toast.makeText(login.this, task.getException().toString(),
                                         Toast.LENGTH_SHORT).show();
                             }
@@ -76,22 +72,20 @@ public class login extends AppCompatActivity {
                 }
             }
         });
-
         buttonSignUpPage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
                 Intent intent = new Intent(login.this, register.class);
                 startActivity(intent);
-                finish(); // Close the login activity
+                finish();
             }
         });
-
         buttonForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
                 Intent intent = new Intent(login.this, reset.class);
                 startActivity(intent);
-                finish(); // Close the login activity
+                finish();
             }
         });
     }
