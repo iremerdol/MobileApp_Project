@@ -22,21 +22,17 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.material.snackbar.Snackbar;
-
-
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
-
     private SensorManager sensorManager;
     private Sensor stepCounterSensor;
     private SharedPreferences sharedPreferences;
@@ -51,16 +47,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView steps, textBalance;
     private Button buttonRedeem;
     private ImageButton buttonLogOut, buttonShare, buttonWallet;
-
     private FirebaseAuth mAuth;
-
     int firstStepCount;
     boolean firstFlag = false, isRedeemed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -72,31 +65,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         progressBar = findViewById(R.id.progressBar);
         steps = findViewById(R.id.steps);
 
-        if (checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED) {
-            // Permission already granted
+        if(checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED){
             isPermissionGranted = true;
             enableUI();
-        } else {
-            // Permission not granted, show Snackbar and request permission
+        }
+        else{
             permissionSnackbar = Snackbar.make(findViewById(android.R.id.content),
-                    "Please grant permission for physical activity",
+                    "Please grant permission for physical activity.",
                     Snackbar.LENGTH_INDEFINITE);
-
             permissionSnackbar.setAction("Grant", v -> {
-                // Open app's settings screen for the user to manually grant permission
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 Uri uri = Uri.fromParts("package", getPackageName(), null);
                 intent.setData(uri);
                 startActivity(intent);
             });
-
             permissionSnackbar.show();
             disableUI();
         }
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
+        if(currentUser == null){
             Intent intent = new Intent(MainActivity.this, login.class);
             startActivity(intent);
             finish();
@@ -106,11 +95,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         db.collection("users").document(mAuth.getUid().toString())
                 .get().addOnCompleteListener(
                         task -> {
-                            if (task.isSuccessful()) {
+                            if(task.isSuccessful()){
                                 DocumentSnapshot document = task.getResult();
                                 Long balance = document.getLong("balance");
                                 textBalance.setText(balance+" STY");
-                            } else {
+                            }
+                            else{
                                 textBalance.setText("Err");
                             }
                         }
@@ -119,9 +109,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
         isRedeemed = sharedPreferences.getBoolean(IS_REDEEMED,false);
-
         resetStepCountIfMidnight();
 
         if(isRedeemed){
@@ -133,19 +121,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             buttonRedeem.setClickable(false);
             buttonRedeem.setBackgroundColor(Color.parseColor("#F1BD9B")); // #ed7525
         }
-
         firstFlag = true;
 
         // Register the sensor listener
-        if (stepCounterSensor != null) {
+        if(stepCounterSensor != null){
             sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
+        }
+        else{
             Toast.makeText(this, "Step Counter Sensor not available", Toast.LENGTH_SHORT).show();
         }
 
         buttonLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(MainActivity.this, login.class);
                 startActivity(intent);
@@ -155,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         buttonShare.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
                 Intent intent = new Intent(MainActivity.this, contacts.class);
                 startActivity(intent);
             }
@@ -172,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         buttonRedeem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(sharedPreferences.getBoolean(IS_REDEEMED,true)){
                     buttonRedeem.setClickable(false);
                     buttonRedeem.setVisibility(View.INVISIBLE);
@@ -183,22 +170,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Toast.makeText(MainActivity.this, "You got 137 STY yayyyyy!!!", Toast.LENGTH_SHORT).show();
                     buttonRedeem.setClickable(false);
                     buttonRedeem.setVisibility(View.INVISIBLE);
-                    //sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).apply();
-                    //steps.setText("Total Steps " + String.valueOf(0));
                     sharedPreferences.edit().putBoolean(IS_REDEEMED,true).apply();
                     isRedeemed = true;
-                    //puan ekle
                     db.collection("users").document(mAuth.getUid().toString())
                             .get().addOnCompleteListener(
                                     task -> {
-                                        if (task.isSuccessful()) {
+                                        if(task.isSuccessful()){
                                             DocumentSnapshot document = task.getResult();
                                             Map<String, Object> user = new HashMap<>();
                                             user.put("email", document.getString("email"));
                                             user.put("pass", document.getString("pass"));
                                             user.put("balance", document.getLong("balance") + 137);
                                             user.put("gifts", document.getLong("gifts"));
-                                            // Add a new document with a generated ID
                                             db.collection("users").document(mAuth.getUid().toString()).set(user);
                                             textBalance.setText(document.getLong("balance") + 137 +" STY");
                                         }
@@ -211,63 +194,55 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         steps.setText("Total Steps " + String.valueOf(0));
         progressBar.setProgress(0);
 
-        if (!isPermissionGranted) {
+        if(!isPermissionGranted){
             requestPermission();
         }
 
         permissionSnackbar = Snackbar.make(findViewById(android.R.id.content),
-                "Please grant permission for physical activity",
+                "Please grant permission for physical activity.",
                 Snackbar.LENGTH_INDEFINITE);
 
         disableUI();
-
         permissionSnackbar.setAction("Grant", v -> requestPermission());
-
         permissionSnackbar.show();
     }
-
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
         checkPermissionStatus();
         if(isRedeemed){
             buttonRedeem.setVisibility(View.INVISIBLE);
         }
     }
-
     @Override
-    protected void onRestart() {
+    protected void onRestart(){
         super.onRestart();
         checkPermissionStatus();
         if(isRedeemed){
             buttonRedeem.setVisibility(View.INVISIBLE);
         }
     }
-
     @Override
-    protected void onDestroy() {
+    protected void onDestroy(){
         super.onDestroy();
-        // Unregister the sensor listener to save resources when the activity is destroyed
-        if (stepCounterSensor != null) {
+        if(stepCounterSensor != null){
             sensorManager.unregisterListener(this);
         }
     }
-
-    private void requestPermission() {
+    private void requestPermission(){
         requestPermissions(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 101);
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 101) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, enable UI components
+        if(requestCode == 101){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 isPermissionGranted = true;
                 enableUI();
-            } else {
-                // Permission denied, show Snackbar with the option to open app's settings directly
+            }
+            else{
                 permissionSnackbar = Snackbar.make(findViewById(android.R.id.content),
-                        "Please grant permission for physical activity. You can open the app settings to grant the permission.",
+                        "Please grant permission for physical activity.",
                         Snackbar.LENGTH_INDEFINITE);
 
                 permissionSnackbar.setAction("Open Settings", v -> {
@@ -276,53 +251,41 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     intent.setData(uri);
                     startActivity(intent);
                 });
-
                 permissionSnackbar.show();
-
                 disableUI();
             }
         }
     }
-
-    private void checkPermissionStatus() {
-        if (checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED) {
-            // Permission already granted
+    private void checkPermissionStatus(){
+        if(checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED){
             isPermissionGranted = true;
             enableUI();
-            // Dismiss the Snackbar if it is showing
-            if (permissionSnackbar != null && permissionSnackbar.isShown()) {
+            if(permissionSnackbar != null && permissionSnackbar.isShown()){
                 permissionSnackbar.dismiss();
             }
-        } else {
-            // Permission not granted, show Snackbar
-            if (permissionSnackbar != null && !permissionSnackbar.isShown()) {
+        }
+        else{
+            if(permissionSnackbar != null && !permissionSnackbar.isShown()){
                 permissionSnackbar.show();
             }
             disableUI();
         }
     }
-
-    // Add this method to disable UI components
-    private void disableUI() {
+    private void disableUI(){
         buttonLogOut.setEnabled(false);
         buttonShare.setEnabled(false);
         buttonWallet.setEnabled(false);
         buttonRedeem.setEnabled(false);
-        // Disable other UI components as needed
     }
-
-    // Add this method to enable UI components
-    private void enableUI() {
+    private void enableUI(){
         buttonLogOut.setEnabled(true);
         buttonShare.setEnabled(true);
         buttonWallet.setEnabled(true);
         buttonRedeem.setEnabled(true);
-        // Enable other UI components as needed
     }
-
     @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+    public void onSensorChanged(SensorEvent event){
+        if(event.sensor.getType() == Sensor.TYPE_STEP_COUNTER){
             // Retrieve the saved step count
 
             if(firstFlag == true){
@@ -346,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             // Check if the step count exceeds 10k
             if(!isRedeemed && isPermissionGranted){
-                if (savedStepCount >= 1) {
+                if(savedStepCount >= 1){
                     buttonRedeem.setClickable(true);
                     buttonRedeem.setBackgroundColor(Color.parseColor("#ed7525"));
                     // Reset the step count
@@ -358,21 +321,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             progressBar.setProgress(savedStepCount);
         }
     }
-
-    private void resetStepCountIfMidnight() {
-        // Retrieve last midnight timestamp
+    private void resetStepCountIfMidnight(){
+        //Get the last day
         long lastMidnight = sharedPreferences.getLong(MIDNIGHT_KEY, 0);
 
-        // Get current time
+        //Current time
         long currentTime = System.currentTimeMillis();
 
-        // Check if it's a new day
-        if (currentTime > lastMidnight + 24 * 60 * 60 * 1000) {
-            // Reset step count and update last midnight timestamp
+        //Check if it's a new day
+        if(currentTime > lastMidnight + 24 * 60 * 60 * 1000){
+            //Reset step and update last midnight timestamp
             sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).putLong(MIDNIGHT_KEY, getTodayMidnight()).putBoolean(IS_REDEEMED,false).apply();
             buttonRedeem.setVisibility(View.VISIBLE);
             buttonRedeem.setClickable(false);
-            buttonRedeem.setBackgroundColor(Color.parseColor("#F1BD9B")); // #ed7525
+            buttonRedeem.setBackgroundColor(Color.parseColor("#F1BD9B"));
             isRedeemed = false;
         }
         else{
@@ -381,9 +343,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             progressBar.setProgress(lastSavedStep);
         }
     }
-
     @NonNull
-    private long getTodayMidnight() {
+    private long getTodayMidnight(){
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
@@ -391,9 +352,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTimeInMillis();
     }
-
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    public void onAccuracyChanged(Sensor sensor, int accuracy){
 
     }
 }
