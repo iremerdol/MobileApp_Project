@@ -1,5 +1,6 @@
 package com.example.teamproject;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ProgressBar progressBar;
     private TextView steps, textBalance;
     private Button buttonRedeem;
-    private ImageButton buttonLogOut, buttonShare, buttonWallet;
+    private ImageButton buttonLogOut, buttonShare, buttonWallet, buttonArticle;
     private FirebaseAuth mAuth;
     int firstStepCount;
     boolean firstFlag = false, isRedeemed;
@@ -63,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         textBalance = findViewById(R.id.textBalance);
         buttonRedeem = findViewById(R.id.buttonRedeem);
         progressBar = findViewById(R.id.progressBar);
+        buttonArticle = findViewById(R.id.buttonArticle);
         steps = findViewById(R.id.steps);
 
         if(checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED){
@@ -149,6 +156,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
+        buttonArticle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(MainActivity.this, ArticleAdapter.class);
+                startService(serviceIntent);
+            }
+        });
         buttonWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,6 +243,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             sensorManager.unregisterListener(this);
         }
     }
+
+    private BroadcastReceiver dataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String jsonData = intent.getStringExtra("jsonData");
+
+            // Parse the JSON data and display it (You can use a library like Gson for parsing)
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+
+                // Assuming you have a TextView named postTextView in your layout
+                TextView postTextView = findViewById(R.id.postTextView);
+
+                // Display the first post title
+                if (jsonArray.length() > 0) {
+                    JSONObject firstPost = jsonArray.getJSONObject(0);
+                    String title = firstPost.getString("title");
+                    postTextView.setText("First Post Title: " + title);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     private void requestPermission(){
         requestPermissions(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 101);
     }
