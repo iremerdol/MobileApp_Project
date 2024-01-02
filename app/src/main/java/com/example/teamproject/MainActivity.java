@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +28,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -37,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final String PREF_NAME = "StepCounterPrefs";
     private static final String STEP_COUNT_KEY = "stepCount";
     private static final String MIDNIGHT_KEY = "midnight";
+    private static final String IS_REDEEMED = "isredeemed";
+
     private ProgressBar progressBar;
     private TextView steps, textBalance;
     private Button buttonRedeem;
@@ -45,10 +50,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private FirebaseAuth mAuth;
 
     int firstStepCount;
-    boolean firstFlag = false,isRedeemed = false;
+    boolean firstFlag = false, isRedeemed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -57,9 +64,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         buttonWallet = findViewById(R.id.buttonWallet);
         textBalance = findViewById(R.id.textBalance);
         buttonRedeem = findViewById(R.id.buttonRedeem);
-
-        buttonRedeem.setClickable(false);
-        buttonRedeem.setBackgroundColor(Color.parseColor("#F1BD9B")); // #ed7525
+        progressBar = findViewById(R.id.progressBar);
+        steps = findViewById(R.id.steps);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -87,10 +93,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
 
+        isRedeemed = sharedPreferences.getBoolean(IS_REDEEMED,false);
+
         resetStepCountIfMidnight();
 
+        if(isRedeemed){
+            buttonRedeem.setVisibility(View.INVISIBLE);
+            buttonRedeem.setClickable(false);
+            buttonRedeem.setBackgroundColor(Color.parseColor("#F1BD9B")); // #ed7525
+        }
+        else{
+            buttonRedeem.setClickable(false);
+            buttonRedeem.setBackgroundColor(Color.parseColor("#F1BD9B")); // #ed7525
+        }
+
         firstFlag = true;
-        isRedeemed  = false;
 
         // Register the sensor listener
         if (stepCounterSensor != null) {
@@ -114,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, contacts.class);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -123,28 +139,68 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, shop.class);
                 startActivity(intent);
-                finish();
             }
         });
 
         buttonRedeem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonRedeem.setClickable(false);
-                buttonRedeem.setVisibility(View.INVISIBLE);
-                sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).apply();
-                //puan ekle 
+
+                if(sharedPreferences.getBoolean(IS_REDEEMED,true)){
+                    buttonRedeem.setClickable(false);
+                    buttonRedeem.setVisibility(View.INVISIBLE);
+                    sharedPreferences.edit().putBoolean(IS_REDEEMED,true).apply();
+                    isRedeemed = true;
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "You got 137 STY yayyyyy!!!", Toast.LENGTH_SHORT).show();
+                    buttonRedeem.setClickable(false);
+                    buttonRedeem.setVisibility(View.INVISIBLE);
+                    //sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).apply();
+                    //steps.setText("Total Steps " + String.valueOf(0));
+                    sharedPreferences.edit().putBoolean(IS_REDEEMED,true).apply();
+                    isRedeemed = true;
+                    //puan ekle
+                    db.collection("users").document(mAuth.getUid().toString())
+                            .get().addOnCompleteListener(
+                                    task -> {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot document = task.getResult();
+                                            Map<String, Object> user = new HashMap<>();
+                                            user.put("email", document.getString("email"));
+                                            user.put("pass", document.getString("pass"));
+                                            user.put("balance", document.getLong("balance") + 137);
+                                            user.put("gifts", document.getLong("gifts"));
+                                            // Add a new document with a generated ID
+                                            db.collection("users").document(mAuth.getUid().toString()).set(user);
+                                            textBalance.setText(document.getLong("balance") + 137 +" STY");
+                                        }
+                                    });
+                }
             }
         });
 
         buttonRedeem.setClickable(false);
 
-        progressBar = findViewById(R.id.progressBar);
-        steps = findViewById(R.id.steps);
-
         steps.setText("Total Steps " + String.valueOf(0));
 
         progressBar.setProgress(0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isRedeemed){
+            buttonRedeem.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if(isRedeemed){
+            buttonRedeem.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -164,9 +220,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if(firstFlag == true){
                 firstFlag = false;
                 firstStepCount = (int) event.values[0];
-                if(sharedPreferences.getInt(STEP_COUNT_KEY, 0) == 0){
-                    sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).apply();
-                }
             }
 
             int savedStepCount = sharedPreferences.getInt(STEP_COUNT_KEY, 0);
@@ -181,15 +234,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             savedStepCount = sharedPreferences.getInt(STEP_COUNT_KEY, 0);
 
-            // Check if the step count exceeds 10k
-            if (savedStepCount >= 10000) {
-                Toast.makeText(this, "Yayyyyy! You've taken over 10,000 steps!", Toast.LENGTH_SHORT).show();
-                buttonRedeem.setClickable(true);
-                buttonRedeem.setBackgroundColor(Color.parseColor("#ed7525"));
-                // Reset the step count
-                //sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).apply();
-            }
+            isRedeemed = sharedPreferences.getBoolean(IS_REDEEMED,true);
 
+            // Check if the step count exceeds 10k
+            if(!isRedeemed){
+                if (savedStepCount >= 1) {
+                    buttonRedeem.setClickable(true);
+                    buttonRedeem.setBackgroundColor(Color.parseColor("#ed7525"));
+                    // Reset the step count
+                    //sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).apply();
+                }
+            }
             steps.setText("Total Steps " + String.valueOf(savedStepCount));
 
             progressBar.setProgress(savedStepCount);
@@ -206,9 +261,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // Check if it's a new day
         if (currentTime > lastMidnight + 24 * 60 * 60 * 1000) {
             // Reset step count and update last midnight timestamp
-            sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).putLong(MIDNIGHT_KEY, getTodayMidnight()).apply();
+            sharedPreferences.edit().putInt(STEP_COUNT_KEY, 0).putLong(MIDNIGHT_KEY, getTodayMidnight()).putBoolean(IS_REDEEMED,false).apply();
+            buttonRedeem.setVisibility(View.VISIBLE);
             buttonRedeem.setClickable(false);
             buttonRedeem.setBackgroundColor(Color.parseColor("#F1BD9B")); // #ed7525
+            isRedeemed = false;
+        }
+        else{
+            int lastSavedStep = sharedPreferences.getInt(STEP_COUNT_KEY, 0);
+            steps.setText("Total Steps " + lastSavedStep);
+            progressBar.setProgress(lastSavedStep);
         }
     }
 
