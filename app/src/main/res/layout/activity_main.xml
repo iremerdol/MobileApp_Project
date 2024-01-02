@@ -107,15 +107,15 @@
 
     <ImageButton
         android:id="@+id/imageButton"
-        android:layout_width="70dp"
-        android:layout_height="66dp"
+        android:layout_width="59dp"
+        android:layout_height="57dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="46dp"
-        android:layout_marginBottom="81dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginBottom="89dp"
         android:backgroundTint="#FCFCFC"
         android:scaleType="fitCenter"
-        app:srcCompat="@android:drawable/ic_menu_info_details"
+        app:srcCompat="@drawable/info2"
         app:tint="#000000" />
     />
 
