@@ -55,20 +55,20 @@ public class login extends AppCompatActivity {
                 else{
                     mAuth.signInWithEmailAndPassword(mail, password)
                             .addOnCompleteListener(login.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task){
-                            if(task.isSuccessful()){
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                Intent intent = new Intent(login.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                            else{
-                                Toast.makeText(login.this, task.getException().toString(),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task){
+                                    if(task.isSuccessful()){
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        Intent intent = new Intent(login.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                    else{
+                                        Toast.makeText(login.this, task.getException().toString(),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                 }
             }
         });

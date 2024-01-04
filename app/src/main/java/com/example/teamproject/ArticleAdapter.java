@@ -46,9 +46,10 @@ public class ArticleAdapter extends IntentService {
             Log.d("DataService", "JSON Data: " + jsonData);
 
             // Now, you can broadcast the obtained data to the MainActivity
-            Intent broadcastIntent = new Intent("dataReceived");
-            broadcastIntent.putExtra("jsonData", jsonData);
-            sendBroadcast(broadcastIntent);
+            Intent newIntent = new Intent(this, ArticleListActivity.class);
+            newIntent.putExtra("jsonData", jsonData);
+            newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Add this line
+            startActivity(newIntent);
 
             // Close resources
             reader.close();

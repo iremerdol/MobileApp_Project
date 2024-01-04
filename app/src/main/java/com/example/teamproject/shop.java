@@ -63,8 +63,6 @@ public class shop extends AppCompatActivity {
         buttonShopBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(shop.this, MainActivity.class);
-                startActivity(intent);
                 finish();
             }
         });

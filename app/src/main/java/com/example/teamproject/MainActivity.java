@@ -253,14 +253,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             try {
                 JSONArray jsonArray = new JSONArray(jsonData);
 
-                // Assuming you have a TextView named postTextView in your layout
-                TextView postTextView = findViewById(R.id.postTextView);
-
                 // Display the first post title
                 if (jsonArray.length() > 0) {
                     JSONObject firstPost = jsonArray.getJSONObject(0);
                     String title = firstPost.getString("title");
-                    postTextView.setText("First Post Title: " + title);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
