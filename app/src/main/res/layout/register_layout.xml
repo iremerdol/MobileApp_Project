@@ -94,4 +94,15 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonSignUp"
         app:layout_constraintVertical_bias="0.0" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="182dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="4dp"
+        android:text="  to walk with them"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="@+id/textSignUp"
+        app:layout_constraintTop_toBottomOf="@+id/textSignUp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
